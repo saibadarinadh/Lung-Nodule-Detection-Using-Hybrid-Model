@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Lung Nodule Detection & Enhancement</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --accent: #e74c3c;
+            --success: #2ecc71;
+            --bg: #f5f7fa;
+            --panel-bg: #fff;
+            --border-radius: 12px;
+            --shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+        body {
+            background: var(--bg);
+            color: var(--secondary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .main-title {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 18px;
+        }
+        .info-box {
+            background: #eaf6fb;
+            color: #1a5276;
+            border-left: 5px solid var(--primary);
+            border-radius: var(--border-radius);
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            font-size: 0.98rem;
+        }
+        .images-row {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 32px;
+            justify-content: center;
+        }
+        .image-panel {
+            flex: 1;
+            background: var(--panel-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 24px 18px 18px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 320px;
+        }
+        .image-label {
+            font-size: 1rem;
+            color: #888;
+            margin-bottom: 8px;
+        }
+        .image-view {
+            background: #222;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 18px;
+            width: 100%;
+            max-width: 420px;
+            min-height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .image-view img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            background: #111;
+        }
+        .controls-panel {
+            background: var(--panel-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 24px 18px;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 24px 48px;
+            justify-content: center;
+        }
+        .controls-inner {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px 48px;
+            justify-content: center;
+        }
+        .controls-group {
+            min-width: 220px;
+            flex: 1 1 220px;
+        }
+        .controls-panel h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            width: 100%;
+        }
+        .control-group {
+            margin-bottom: 18px;
+        }
+        .control-label {
+            font-weight: 500;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .control-label i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .slider-row input[type="range"] {
+            flex: 1;
+        }
+        .slider-value {
+            min-width: 36px;
+            text-align: right;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .action-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+            width: 100%;
+            justify-content: center;
+        }
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #217dbb;
+        }
+        .btn-secondary {
+            background: #f0f0f0;
+            color: var(--secondary);
+        }
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        @media (max-width: 900px) {
+            .images-row { flex-direction: column; gap: 18px; }
+            .controls-inner { flex-direction: column; gap: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="main-title">Manual Lung Nodule Detection & Enhancement</div>
+            <div class="subtitle">Visualize and enhance lung nodules in CT images using advanced filters.</div>
+        </header>
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i> This tool is for research and visualization only. Not for clinical use. Use the controls to enhance features relevant to lung nodule detection.
+        </div>
+        <div class="images-row">
+            <div class="image-panel">
+                <div class="image-label">Original Image</div>
+                <div class="image-view"><img id="original-image" src="" alt="Original CT" /></div>
+            </div>
+            <div class="image-panel">
+                <div class="image-label">Processed Image</div>
+                <div class="image-view"><img id="processed-image" src="" alt="Processed CT" /></div>
+            </div>
+        </div>
+        <div class="controls-panel">
+            <div class="controls-inner">
+                <div class="controls-group">
+                    <h3><i class="fas fa-sliders-h"></i> Image Adjustments</h3>
+                    <div class="control-group">
+                        <div class="control-label"><i class="fas fa-sun"></i> Brightness</div>
+                        <div class="slider-row">
+                            <input type="range" id="brightness" min="-5" max="5" step="0.1" value="0">
+                            <span class="slider-value" id="brightness-value">0</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="control-label"><i class="fas fa-adjust"></i> Contrast</div>
+                        <div class="slider-row">
+                            <input type="range" id="contrast" min="0.5" max="2" step="0.1" value="1">
+                            <span class="slider-value" id="contrast-value">1</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="control-label"><i class="fas fa-tint"></i> Gamma</div>
+                        <div class="slider-row">
+                            <input type="range" id="gamma" min="0.3" max="3.0" step="0.01" value="1">
+                            <span class="slider-value" id="gamma-value">1</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="controls-group">
+                    <h3><i class="fas fa-magic"></i> Enhancement</h3>
+                    <div class="control-group">
+                        <div class="control-label"><i class="fas fa-expand"></i> CLAHE (Local Contrast)</div>
+                        <div class="slider-row">
+                            <input type="range" id="clahe" min="0" max="5" step="0.1" value="0">
+                            <span class="slider-value" id="clahe-value">0</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="control-label"><i class="fas fa-eye"></i> Unsharp Mask</div>
+                        <div class="slider-row">
+                            <input type="range" id="unsharp-amount" min="0" max="3" step="0.1" value="0">
+                            <span class="slider-value" id="unsharp-amount-value">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="controls-group">
+                    <h3><i class="fas fa-border-style"></i> Edge Detection</h3>
+                    <div class="control-group">
+                        <label class="control-label"><i class="fas fa-wave-square"></i> Canny</label>
+                        <input type="checkbox" id="canny">
+                        <div class="slider-row">
+                            <input type="range" id="canny-threshold1" min="0" max="255" value="100">
+                            <span class="slider-value" id="canny-threshold1-value">100</span>
+                        </div>
+                        <div class="slider-row">
+                            <input type="range" id="canny-threshold2" min="0" max="255" value="200">
+                            <span class="slider-value" id="canny-threshold2-value">200</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="action-row">
+                <button class="btn btn-primary" id="detect-nodules-btn"><i class="fas fa-microscope"></i> Detect Nodules</button>
+                <button class="btn btn-secondary" id="reset-filters-btn"><i class="fas fa-undo"></i> Reset</button>
+                <button class="btn btn-secondary" id="download-btn"><i class="fas fa-download"></i> Download</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Update slider values
+        document.querySelectorAll('input[type="range"]').forEach(slider => {
+            const valueSpan = document.getElementById(slider.id + '-value');
+            slider.addEventListener('input', () => valueSpan.textContent = slider.value);
+            valueSpan.textContent = slider.value;
+        });
+        // Download processed image
+        document.getElementById('download-btn').addEventListener('click', function() {
+            const img = document.getElementById('processed-image');
+            const link = document.createElement('a');
+            link.href = img.src;
+            link.download = 'processed_image.png';
+            link.click();
+        });
+        // Reset filters
+        document.getElementById('reset-filters-btn').addEventListener('click', function() {
+            document.getElementById('brightness').value = 0;
+            document.getElementById('contrast').value = 1;
+            document.getElementById('gamma').value = 1;
+            document.getElementById('clahe').value = 0;
+            document.getElementById('unsharp-amount').value = 0;
+            document.getElementById('canny').checked = false;
+            document.getElementById('canny-threshold1').value = 100;
+            document.getElementById('canny-threshold2').value = 200;
+            // Update slider values
+            document.querySelectorAll('input[type="range"]').forEach(slider => {
+                const valueSpan = document.getElementById(slider.id + '-value');
+                valueSpan.textContent = slider.value;
+            });
+            updateProcessedImage();
+        });
+        // Detect Nodules button
+        document.getElementById('detect-nodules-btn').addEventListener('click', function() {
+            // Set CLAHE and Unsharp to high, enable Canny
+            document.getElementById('clahe').value = 3;
+            document.getElementById('unsharp-amount').value = 2;
+            document.getElementById('canny').checked = true;
+            document.getElementById('canny-threshold1').value = 80;
+            document.getElementById('canny-threshold2').value = 180;
+            // Update slider values
+            document.querySelectorAll('input[type="range"]').forEach(slider => {
+                const valueSpan = document.getElementById(slider.id + '-value');
+                valueSpan.textContent = slider.value;
+            });
+            updateProcessedImage();
+        });
+        // Update processed image on any control change
+        document.querySelectorAll('.controls-panel input, .controls-panel select').forEach(ctrl => {
+            ctrl.addEventListener('input', updateProcessedImage);
+            ctrl.addEventListener('change', updateProcessedImage);
+        });
+        // Load initial images
+        window.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/get-analysis-figure')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.figure) {
+                        document.getElementById('original-image').src = data.figure;
+                        document.getElementById('processed-image').src = data.figure;
+                    }
+                });
+        });
+        // Update processed image function
+        async function updateProcessedImage() {
+            const params = {
+                brightness: parseFloat(document.getElementById('brightness').value),
+                contrast: parseFloat(document.getElementById('contrast').value),
+                gamma: parseFloat(document.getElementById('gamma').value),
+                clahe: parseFloat(document.getElementById('clahe').value),
+                unsharp: parseFloat(document.getElementById('unsharp-amount').value),
+                cannyEnabled: document.getElementById('canny').checked,
+                cannyThreshold1: parseInt(document.getElementById('canny-threshold1').value),
+                cannyThreshold2: parseInt(document.getElementById('canny-threshold2').value)
+            };
+            const response = await fetch('/api/update-analysis', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(params)
+            });
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('processed-image').src = data.figure;
+            }
+        }
+    </script>
+</body>
+</html>

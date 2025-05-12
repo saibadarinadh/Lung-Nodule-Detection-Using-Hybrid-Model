@@ -1,0 +1,5 @@
+# Ignore dataset directory
+dataset/
+hybrid_lidc_model.pth
+lidc_model.pth
+saved_dicom_model.pkl

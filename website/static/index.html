@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lung Nodule Classification</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-lungs"></i>
+                </div>
+                <div class="title">
+                    <h1>Lung Nodule Classification</h1>
+                    <p>AI-Powered Diagnostic Tool for Lung CT Scans</p>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="https://github.com/saibadarinadh/Lung-Nodule-Detection-Using-Hybrid-Model" target="_blank">Repository</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section id="home" class="section">
+            <div class="welcome">
+                <h2>Welcome to Lung Nodule Classification</h2>
+                <p>Upload your DICOM file to analyze for potential lung nodules using our hybrid AI model.</p>
+                <div class="workflow">
+                    <div class="workflow-step">
+                        <div class="workflow-icon">
+                            <i class="fas fa-upload"></i>
+                        </div>
+                        <p>Upload scan</p>
+                    </div>
+                    <div class="workflow-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="workflow-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <p>Analyze</p>
+                    </div>
+                    <div class="workflow-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="workflow-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <p>Get results</p>
+                    </div>
+                </div>
+            </div>
+            
+            
+
+            <div class="main-content">
+                <div class="upload-section">
+                    <h3>Upload DICOM Image</h3>
+                    <div class="upload-box" id="upload-box">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag & drop your DICOM file or click to browse</p>
+                        <span class="file-format">Supported format: .dcm</span>
+                        <input type="file" id="file-input" accept=".dcm" hidden>
+                    </div>
+                    <div class="preview-container" id="preview-container">
+                        <h4>Preview</h4>
+                        <div id="preview-image">
+                            <p class="placeholder-text">Preview will appear here</p>
+                        </div>
+                    </div>
+                    <div id="error-container" class="error-container hidden">
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div class="error-content">
+                                <h4 id="error-title">Error</h4>
+                                <p id="error-details"></p>
+                                <div id="similarity-score" class="similarity-score hidden">
+                                    <div class="score-bar">
+                                        <div class="score-fill" id="score-fill"></div>
+                                    </div>
+                                    <span id="score-text">Similarity Score: 0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="upload-btn" class="btn primary-btn" disabled>
+                        <i class="fas fa-microscope"></i> Analyze Image
+                    </button>
+                </div>
+
+                <div class="results-section hidden" id="results-section">
+                    <div class="results-header">
+                        <h3>Analysis Results</h3>
+                        <button id="new-scan-btn" class="btn secondary-btn">
+                            <i class="fas fa-plus"></i> New Scan
+                        </button>
+                    </div>
+                    
+                    <div class="results-grid">
+                        <div class="image-display">
+                            <h4>CT Scan Image</h4>
+                            <div id="image-container">
+                                <p class="placeholder-text">CT scan will appear here</p>
+                            </div>
+                        </div>
+                        
+                        <div class="prediction-results">
+                            <h4>Diagnostic Analysis</h4>
+                            <div id="prediction-container">
+                                <div class="loading">
+                                    <p>Waiting for analysis...</p>
+                                </div>
+                            </div>
+                            
+                            <div class="confidence-container">
+                                <h4>Confidence Score</h4>
+                                <div id="confidence-meter" class="confidence-meter">
+                                    <div class="meter-bar">
+                                        <div class="meter-fill" id="meter-fill"></div>
+                                    </div>
+                                    <div class="meter-labels">
+                                        <span>0%</span>
+                                        <span>50%</span>
+                                        <span>100%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="projection-info">
+                                <h4>View Projection</h4>
+                                <div id="projection-container">
+                                    <div class="projection-tag">
+                                        <i class="fas fa-x-ray"></i>
+                                        <span id="projection-type">Waiting for analysis...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="disclaimer">
+                                <p><i class="fas fa-info-circle"></i> This is a preliminary result. Please consult with a healthcare professional for proper diagnosis.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="manual-analysis-section">
+                        <button id="manual-analysis-btn" class="btn secondary-btn">
+                            <i class="fas fa-microscope"></i> Analyze Manually
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="section">
+            <div class="model-info">
+                <h2>About the Hybrid Model</h2>
+                
+                <div class="model-intro">
+                    <p>Our lung nodule Classification system uses a state-of-the-art hybrid deep learning architecture that combines multiple neural network types to achieve superior accuracy and performance.</p>
+                </div>
+                
+                <div class="model-architecture">
+                    <h3>Model Architecture</h3>
+                    <div class="architecture-diagram">
+                        <div class="model-component">
+                            <i class="fas fa-image"></i>
+                            <p>Input Image</p>
+                        </div>
+                        <div class="arrow">→</div>
+                        <div class="model-component">
+                            <i class="fas fa-network-wired"></i>
+                            <p>EfficientNet</p>
+                        </div>
+                        <div class="parallel-arrow">
+                            <div class="arrow">→</div>
+                            <div class="arrow">→</div>
+                        </div>
+                        <div class="model-component">
+                            <i class="fas fa-brain"></i>
+                            <p>ViT</p>
+                        </div>
+                        <div class="arrow">→</div>
+                        <div class="model-component">
+                            <i class="fas fa-project-diagram"></i>
+                            <p>BiLSTM</p>
+                        </div>
+                        <div class="arrow">→</div>
+                        <div class="model-component">
+                            <i class="fas fa-chart-line"></i>
+                            <p>Output</p>
+                        </div>
+                    </div>
+                    
+                    <div class="model-description">
+                        <h3>How It Works</h3>
+                        <p>This hybrid model combines multiple deep learning architectures to improve lung nodule Classification accuracy:</p>
+                        <ul>
+                            <li>
+                                <strong>EfficientNet B0:</strong> 
+                                <p>Extracts spatial features from the CT scan images with optimized efficiency. EfficientNet uses a compound scaling method that uniformly scales network width, depth, and resolution to capture local patterns in the image.</p>
+                            </li>
+                            <li>
+                                <strong>Vision Transformer (ViT):</strong> 
+                                <p>Captures global context and relationships between image regions. The transformer architecture divides images into patches and processes them with self-attention mechanisms to understand long-range dependencies.</p>
+                            </li>
+                            <li>
+                                <strong>Bidirectional LSTM:</strong> 
+                                <p>Processes combined features from both networks to make the final prediction. The BiLSTM analyzes the feature sequence in both forward and backward directions to capture temporal relationships within the feature space.</p>
+                            </li>
+                        </ul>
+                        
+                        <div class="performance">
+                            <h3>Performance Benefits</h3>
+                            <p>The hybrid architecture achieves superior performance by combining the strengths of:</p>
+                            <div class="benefits-grid">
+                                <div class="benefit-card">
+                                    <i class="fas fa-microscope"></i>
+                                    <h4>Local Feature Classification</h4>
+                                    <p>CNNs excel at capturing local spatial patterns relevant to nodule texture and shape</p>
+                                </div>
+                                <div class="benefit-card">
+                                    <i class="fas fa-expand-arrows-alt"></i>
+                                    <h4>Global Context</h4>
+                                    <p>Transformers understand relationships between distant image regions</p>
+                                </div>
+                                <div class="benefit-card">
+                                    <i class="fas fa-project-diagram"></i>
+                                    <h4>Feature Integration</h4>
+                                    <p>BiLSTM effectively combines information from both networks</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Lung Nodule Classification</h4>
+                    <p>An AI-powered tool for medical imaging analysis</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="https://github.com/saibadarinadh/Lung-Nodule-Detection-Using-Hybrid-Model" target="_blank">GitHub Repository</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Disclaimer</h4>
+                    <p>This tool is for research purposes only and not intended for clinical use.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 Lung Nodule Classification Project</p>
+            </div>
+        </footer>
+    </div>
+
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <p>Analyzing CT scan...</p>
+        <small>This may take a few moments</small>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
